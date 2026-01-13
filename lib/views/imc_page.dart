@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:imcflutter/models/imc_model.dart';
+import 'package:imcflutter/widgets/custom_drawer.dart';
 
 class ImcPage extends StatefulWidget {
   const ImcPage({super.key});
@@ -8,6 +10,26 @@ class ImcPage extends StatefulWidget {
 }
 
 class _ImcPageState extends State<ImcPage> {
+
+  var pesoController = TextEditingController();
+  var alturaController = TextEditingController();
+
+
+
+
+@override
+  void initState() {
+    String pesoText = pesoController.text;
+    String alturaText = alturaController.text;
+
+    double valorPeso = double.tryParse(pesoText) ?? 0.0;
+    double valorAltura = double.tryParse(alturaText) ?? 0.0;
+
+    var imcModel = ImcModel(valorPeso, valorAltura);
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -17,6 +39,7 @@ class _ImcPageState extends State<ImcPage> {
             backgroundColor: Colors.blueAccent,
             centerTitle: true,
           ),
+          drawer: CustomDrawer(),
           body: SizedBox(
             width: double.infinity,
             child: Container(
@@ -28,39 +51,32 @@ class _ImcPageState extends State<ImcPage> {
                   SizedBox(
                     height: 30,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(Icons.numbers),
-                      Text("Digite seu peso"),
-                    ],
+                  TextField(
+                    controller: pesoController,
+                    decoration: InputDecoration(
+                      labelText: "Digite seu peso em kg",
+                      hintText: "Ex: 73",
+                      prefixIcon: Icon(Icons.numbers, color: Colors.blueAccent,)
+                    ),
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  TextField(),
                   SizedBox(
                     height: 20,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(Icons.keyboard_double_arrow_up),
-                      Text("Digite sua Altura"),
-                    ],
+                  TextField(
+                    controller: alturaController,
+                    decoration: InputDecoration(
+                        labelText: "Digite sua altura em cm",
+                        hintText: "Ex: 180",
+                        prefixIcon: Icon(Icons.arrow_upward, color: Colors.blueAccent,)
+                    ),
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  TextField(),
                   SizedBox(
                     height: 30,
                   ),
                   Container(
                     width: double.infinity,
                     margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    height: 35,
-                    alignment: Alignment.center,
+                    height: 50,
                     child: TextButton(
                       style: TextButton.styleFrom(
                         shape: RoundedRectangleBorder(
@@ -72,7 +88,7 @@ class _ImcPageState extends State<ImcPage> {
                         onPressed: (){
 
                         },
-                        child: Text("Calcular", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),)),
+                        child: Text("Calcular", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),)),
                   )
                 ],
               ),
