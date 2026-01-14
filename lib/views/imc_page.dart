@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:imcflutter/models/imc_model.dart';
+import 'package:imcflutter/repositories/imc_repository.dart';
+import 'package:imcflutter/service/calculo_imc_service.dart';
 import 'package:imcflutter/widgets/custom_drawer.dart';
 
 class ImcPage extends StatefulWidget {
@@ -11,23 +13,28 @@ class ImcPage extends StatefulWidget {
 
 class _ImcPageState extends State<ImcPage> {
 
+  var imcRepository = ImcRepository();
+  var imcCalcService = CalculoImcService();
+  var medidas = <ImcModel>[];
+
   var pesoController = TextEditingController();
   var alturaController = TextEditingController();
 
-
-
-
-@override
-  void initState() {
+  double alteraPeso(){
     String pesoText = pesoController.text;
-    String alturaText = alturaController.text;
 
     double valorPeso = double.tryParse(pesoText) ?? 0.0;
+
+    return valorPeso;
+
+  }
+
+  double alteraAltura(){
+    String alturaText = alturaController.text;
+
     double valorAltura = double.tryParse(alturaText) ?? 0.0;
 
-    var imcModel = ImcModel(valorPeso, valorAltura);
-
-    super.initState();
+    return valorAltura;
   }
 
   @override
@@ -85,11 +92,37 @@ class _ImcPageState extends State<ImcPage> {
                           foregroundColor: Colors.white,
                           backgroundColor: Colors.blueAccent
                       ),
-                        onPressed: (){
+                        onPressed: () async{
+                          double alturaEmMetro = alteraAltura() /100;
 
+                          var imcModel = ImcModel(alteraPeso(), alturaEmMetro);
+
+                          imcModel.imcTotal = imcCalcService.calculoImc(imcModel);
+
+
+                            await imcRepository.adicionarMedida(imcModel);
+
+                            pesoController.clear();
+                            alturaController.clear();
+
+                            showDialog(context: context, builder: (BuildContext bc){
+                              return AlertDialog(
+                                title: Text("Medida cadastrada com sucesso!"),
+                                content: Text("Seu IMC é: ${imcModel.imcTotal.toStringAsFixed(2)}\n"
+                                    "Classificação: ${imcModel.classificacao}"),
+                                actions: [
+                                  TextButton(
+                                      onPressed: (){
+                                        Navigator.pop(context);
+                                      }, 
+                                      child: Text("OK"))
+                                ],
+                              );
+                            });
                         },
                         child: Text("Calcular", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),)),
-                  )
+                  ),
+
                 ],
               ),
             ),

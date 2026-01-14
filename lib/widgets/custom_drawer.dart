@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:imcflutter/views/imc_historic.dart';
+
+import '../views/imc_historic.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
